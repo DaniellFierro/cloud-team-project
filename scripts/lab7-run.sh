@@ -8,7 +8,7 @@ echo '=== Git commit ==='
 git rev-parse HEAD
 echo '=== Install and check Docker ==='
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo systemctl enable --now docker
 sudo docker --version
 sudo docker run --rm hello-world
