@@ -145,3 +145,22 @@ git diff --check
 размещения нужен подходящий серверный стек и дополнительные средства защиты.
 Модуль [http.server](https://docs.python.org/3.12/library/http.server.html) не рекомендуется
 Python для production. Секреты, токены и локальные `.env` не публикуются.
+
+## Развертывание на виртуальной машине
+
+Для Ubuntu установите `git python3 python3-pip python3-venv curl`, клонируйте этот
+репозиторий и создайте `.venv`, как описано выше. В учебной ВМ пользователь — `daniil`.
+
+```bash
+.venv/bin/python -m pip install --no-index -r requirements.txt
+.venv/bin/python -m unittest discover -s tests -v
+sudo install -m 0644 config/cloud-catalog.service /etc/systemd/system/cloud-catalog.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now cloud-catalog
+curl --retry 5 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:5000/health
+```
+
+Для другого имени пользователя исправьте пути и `User` в unit-файле до установки.
+Служба запускает `.venv/bin/python -m app.main` с `HOST=0.0.0.0`, `PORT=5000`.
+Windows обращается к `http://127.0.0.1:5000` через NAT VirtualBox в `10.0.2.15:5000`.
+Полные команды обновления, диагностики и остановки: [развёртывание на ВМ](docs/vm-deployment.md).
