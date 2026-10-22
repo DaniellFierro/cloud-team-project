@@ -1,0 +1,19 @@
+{
+  "services": [
+    {
+      "model": "IaaS",
+      "example": "Virtual Machines",
+      "description": "Аренда виртуальных вычислительных ресурсов"
+    },
+    {
+      "model": "PaaS",
+      "example": "Managed App Platform",
+      "description": "Размещение собственного приложения на готовой платформе"
+    },
+    {
+      "model": "SaaS",
+      "example": "Online Office",
+      "description": "Использование готового ПО через Интернет"
+    }
+  ]
+}
