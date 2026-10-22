@@ -179,7 +179,7 @@ sudo docker run -d --name cloud-catalog-docker \
   -p 8080:5000 -e APP_TITLE="Cloud Service Catalog Docker" cloud-catalog:v1
 sudo docker ps
 sudo docker logs cloud-catalog-docker
-curl --retry 5 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:8080/health
+curl --retry 5 --retry-all-errors --retry-delay 1 -fsS http://127.0.0.1:8080/health
 curl -fsS http://127.0.0.1:8080/api/services
 sudo docker stop cloud-catalog-docker
 sudo docker start cloud-catalog-docker
