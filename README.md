@@ -164,3 +164,36 @@ curl --retry 5 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:5000/he
 Служба запускает `.venv/bin/python -m app.main` с `HOST=0.0.0.0`, `PORT=5000`.
 Windows обращается к `http://127.0.0.1:5000` через NAT VirtualBox в `10.0.2.15:5000`.
 Полные команды обновления, диагностики и остановки: [развёртывание на ВМ](docs/vm-deployment.md).
+
+## Запуск в Docker
+
+Docker Engine устанавливается в Ubuntu по [официальной инструкции](https://docs.docker.com/engine/install/ubuntu/).
+Проверка: `docker --version` и `sudo docker run --rm hello-world`.
+Из корня репозитория выполните:
+
+```bash
+sudo docker build --progress=plain -t cloud-catalog:v1 .
+sudo docker run -d --name cloud-catalog-docker \
+  --restart unless-stopped --read-only --tmpfs /tmp \
+  --cap-drop ALL --security-opt no-new-privileges:true \
+  -p 8080:5000 -e APP_TITLE="Cloud Service Catalog Docker" cloud-catalog:v1
+sudo docker ps
+sudo docker logs cloud-catalog-docker
+curl --retry 5 --retry-connrefused --retry-delay 1 -fsS http://127.0.0.1:8080/health
+curl -fsS http://127.0.0.1:8080/api/services
+sudo docker stop cloud-catalog-docker
+sudo docker start cloud-catalog-docker
+```
+
+Порт 8080 относится к Ubuntu, 5000 — к приложению в контейнере. При настроенном NAT
+из Windows используется `http://127.0.0.1:8080`. Служба из работы № 6 продолжает
+работать отдельно на 5000. `EXPOSE` в Dockerfile только документирует порт;
+публикацию выполняет `-p`. Имя контейнера должно быть свободно для первого `run`;
+существующий контейнер запускается командой `start`.
+
+Процесс образа работает как `appuser` (UID 10001). Образ содержит только `app/` и
+`requirements.txt`. `.dockerignore` исключает Git, окружения, отчёты и секреты.
+`APP_TITLE` — открытый учебный параметр; для реальных секретов нужен отдельный
+защищённый механизм передачи. Изменение Dockerfile требует новой сборки и нового
+контейнера; `docker restart` существующего контейнера не обновляет образ.
+Подробности: [контейнеризация](docs/docker.md).
