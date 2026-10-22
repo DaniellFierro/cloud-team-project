@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.log
+.idea/
+.vscode/
+.DS_Store
+.github/workflows/tests.yml
